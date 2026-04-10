@@ -1,0 +1,28 @@
+[Unit]
+Description=dbx Monitoring Agent
+Documentation=https://github.com/itunified-io/dbx-agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=dbx-agent
+Group=dbx-agent
+ExecStart=/opt/dbx-agent/bin/dbx-agent --config /opt/dbx-agent/config/agent.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dbx-agent
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/dbx-agent/data /opt/dbx-agent/logs
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
